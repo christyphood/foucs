@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>focus-flight-immersive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @font-face {
+        font-family: "JOOXSansBrand";
+        src: url("./static/JOOXSansBrand-Regular.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+      body {
+        font-family: "JOOXSansBrand", sans-serif;
+      }
+      .seat-unit .seat-part {
+        transition: background-color 0.12s ease, opacity 0.12s ease;
+      }
+      .seat-unit.selected .seat-part {
+        background-color: rgb(255, 215, 0) !important;
+      }
+      .seat-unit.selected .seat-armrest {
+        opacity: 1 !important;
+      }
+      #seat-label {
+        min-width: 2ch;
+      }
+      #ticket-content {
+        will-change: transform, opacity;
+      }
+      #ticket-content.exit-up {
+        animation: ticket-content-exit 1s ease-in forwards;
+        pointer-events: none;
+      }
+      @keyframes ticket-content-exit {
+        from {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateY(-180px);
+          opacity: 0.05;
+        }
+      }
+
+      #flight-card-wrap {
+        top: 110px;
+        height: calc(815px - 110px);
+        will-change: opacity;
+        overflow: visible;
+      }
+      #flight-card-wrap.show {
+        visibility: visible;
+        pointer-events: auto;
+      }
+      #flight-card {
+        font-family: "JOOXSansBrand", sans-serif;
+        will-change: transform, opacity;
+        opacity: 0;
+        transform: translateY(280px);
+        height: auto;
+      }
+      #flight-card .card-divider {
+        position: relative;
+        width: 100%;
+        height: 27px;
+        background: #fff;
+        flex-shrink: 0;
+        overflow: visible;
+      }
+      #flight-card .card-divider::before {
+        content: "";
+        position: absolute;
+        left: 20px;
+        right: 20px;
+        top: 50%;
+        border-top: 2px dashed #E5E5EA;
+      }
+      #flight-card .card-divider::after {
+        content: "";
+        position: absolute;
+        left: -13.5px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 27px;
+        height: 27px;
+        border-radius: 50%;
+        background: rgb(2, 2, 2);
+        box-shadow: 300px 0 0 rgb(2, 2, 2);
+      }
+      #flight-card-wrap.show #flight-card {
+        animation: flight-card-enter 1s ease-in forwards;
+      }
+      @keyframes flight-card-enter {
+        from {
+          transform: translateY(280px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      #flight-card-wrap.show #flight-card {
+        cursor: pointer;
+      }
+      #flight-card.exit-down {
+        animation: flight-card-exit-down 1s ease-in forwards;
+        pointer-events: none;
+      }
+      @keyframes flight-card-exit-down {
+        from {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateY(280px);
+          opacity: 0;
+        }
+      }
+
+      #status-bar,
+      #top-nav {
+        will-change: transform, opacity;
+      }
+      #status-bar.exit-up-nav,
+      #top-nav.exit-up-nav {
+        animation: top-ui-exit-up 1s ease-in forwards;
+        pointer-events: none;
+      }
+      @keyframes top-ui-exit-up {
+        from {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateY(-80px);
+          opacity: 0;
+        }
+      }
+
+      #flightmode-wrap {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 3;
+        width: 375px;
+        height: 815px;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      #flightmode-wrap.show {
+        visibility: visible;
+        pointer-events: auto;
+        animation: flightmode-enter 1s ease-in forwards;
+      }
+      #flightmode-wrap.exit {
+        visibility: visible;
+        animation: flightmode-exit 1s ease-in forwards;
+        pointer-events: none;
+      }
+      @keyframes flightmode-enter {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes flightmode-exit {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      #flight-card.enter-back {
+        animation: flight-card-enter 1s ease-in forwards;
+        pointer-events: auto;
+        cursor: pointer;
+      }
+
+      #status-bar.enter-back-nav,
+      #top-nav.enter-back-nav {
+        animation: top-ui-enter-down 1s ease-in forwards;
+        pointer-events: auto;
+      }
+      @keyframes top-ui-enter-down {
+        from {
+          transform: translateY(-80px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      #flightmode-frame {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <audio id="checkin-sound" src="./checkin.wav" preload="auto"></audio>
+    <div class="relative w-[375px] h-[815px] overflow-hidden bg-[rgb(2,2,2)]"><div id="ticket-content" class="absolute left-[0px] top-[0px] z-[1] w-[375px] h-[815px]"><img src="./static/wecom-temp-174111-b3e4ca510b97a69c4a6718d0f6d198e4_1_fde2fd.png" class="absolute left-[4px] top-[159px] z-[1] w-[367.5px] h-[656px]" style="object-fit:cover" /><div class="absolute left-[88.5px] top-[497px] z-[2] w-[197.5px] flex box-border flex-shrink-0 flex-row justify-center items-center gap-x-[15px]"><div class="relative flex-shrink-0 z-[1] text-[18.36px] font-[JOOXSansBrand] font-medium leading-[22.03px] text-[rgb(142,142,147)] flex items-center justify-center h-[22px] w-[40px] whitespace-nowrap">Seat</div><div class="relative flex-shrink-0 z-[2] text-[22.6px] font-[JOOXSansBrand] font-bold leading-[27.12px] text-[rgb(255,215,0)] flex items-center justify-center h-[27.5px] w-[29.5px] whitespace-nowrap" id="seat-label"></div></div><div class="absolute left-[88px] top-[435.5px] z-[3] w-[199.5px] flex box-border flex-shrink-0 flex-row justify-between items-center"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[2.61px]"><div class="relative flex-shrink-0 z-[1] text-[26.08px] font-[JOOXSansBrand] font-extrabold leading-[31.29px] text-[rgb(255,255,255)] flex items-center justify-start h-[31.5px] w-[54px] whitespace-nowrap">BKK</div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-col justify-start items-center gap-y-[2.61px]"><div class="relative flex-shrink-0 z-[1] w-[15.5px] h-[15.5px] overflow-hidden"><img src="./static/Vector_c0f484.svg" class="absolute left-[0px] top-[2.5px] z-[1] w-[14.5px] h-[12px]" style="object-fit:cover" /></div><div class="relative flex-shrink-0 z-[2] text-[7.82px] font-[JOOXSansBrand] font-semibold leading-[9.39px] text-[rgb(142,142,147)] flex items-center justify-start h-[9.5px] w-[19.5px] whitespace-nowrap">30 m</div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-col justify-start items-end gap-y-[2.61px]"><div class="relative flex-shrink-0 z-[1] text-[26.08px] font-[JOOXSansBrand] font-extrabold leading-[31.29px] text-[rgb(255,255,255)] flex items-center justify-start h-[31.5px] w-[57px] whitespace-nowrap">HKG</div></div></div><div class="absolute left-[0px] top-[0px] z-[4] w-[375px] h-[815px]"><div class="absolute left-[36.5px] top-[554.5px] z-[1] w-[302px] h-[228.5px]"><div class="absolute left-[0px] top-[0px] z-[1] w-[302px] h-[228.5px]"><div class="absolute left-[0px] top-[0px] z-[1] w-[302px] flex box-border flex-shrink-0 flex-row justify-between items-center gap-x-[30px]"><div class="relative flex-shrink-0 z-[1] w-[136px] flex box-border flex-shrink-0 flex-row justify-between items-start"><div class="relative flex-shrink-0 z-[1] w-[41.5px] flex box-border flex-shrink-0 flex-row justify-center items-start"><div class="relative flex-shrink-0 z-[1] text-[12.96px] font-[JOOXSansBrand] font-medium leading-[15.55px] text-[rgba(255,255,255,0.7)] flex items-center justify-center h-[15.5px] w-[9.5px] whitespace-nowrap">A</div></div><div class="relative flex-shrink-0 z-[2] w-[41.5px] flex box-border flex-shrink-0 flex-row justify-center items-start"><div class="relative flex-shrink-0 z-[1] text-[12.96px] font-[JOOXSansBrand] font-medium leading-[15.55px] text-[rgba(255,255,255,0.7)] flex items-center justify-center h-[15.5px] w-[8.5px] whitespace-nowrap">B</div></div><div class="relative flex-shrink-0 z-[3] w-[41.5px] flex box-border flex-shrink-0 flex-row justify-center items-start"><div class="relative flex-shrink-0 z-[1] text-[12.96px] font-[JOOXSansBrand] font-medium leading-[15.55px] text-[rgba(255,255,255,0.7)] flex items-center justify-center h-[15.5px] w-[10px] whitespace-nowrap">C</div></div></div><div class="relative flex-shrink-0 z-[2] w-[136px] flex box-border flex-shrink-0 flex-row justify-between items-start"><div class="relative flex-shrink-0 z-[1] w-[41.5px] flex box-border flex-shrink-0 flex-row justify-center items-start"><div class="relative flex-shrink-0 z-[1] text-[12.96px] font-[JOOXSansBrand] font-medium leading-[15.55px] text-[rgba(255,255,255,0.7)] flex items-center justify-center h-[15.5px] w-[7.5px] whitespace-nowrap">J</div></div><div class="relative flex-shrink-0 z-[2] w-[41.5px] flex box-border flex-shrink-0 flex-row justify-center items-start"><div class="relative flex-shrink-0 z-[1] text-[12.96px] font-[JOOXSansBrand] font-medium leading-[15.55px] text-[rgba(255,255,255,0.7)] flex items-center justify-center h-[15.5px] w-[9px] whitespace-nowrap">K</div></div><div class="relative flex-shrink-0 z-[3] w-[41.5px] flex box-border flex-shrink-0 flex-row justify-center items-start"><div class="relative flex-shrink-0 z-[1] text-[12.96px] font-[JOOXSansBrand] font-medium leading-[15.55px] text-[rgba(255,255,255,0.7)] flex items-center justify-center h-[15.5px] w-[7.5px] whitespace-nowrap">L</div></div></div></div><div id="seat-rows" class="absolute left-[6.5px] top-[24.5px] z-[2] w-[289px] h-[204px] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[11.52px]"><div class="relative flex-shrink-0 z-[1] self-stretch w-[289px] flex box-border flex-shrink-0 flex-row justify-center items-center gap-x-[6px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-start gap-x-[5.76px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div></div><div class="relative flex-shrink-0 z-[2] w-[17px] flex box-border flex-shrink-0 flex-row justify-center items-start"><div class="relative flex-shrink-0 z-[1] text-[12.96px] font-[JOOXSansBrand] font-medium leading-[15.55px] text-[rgb(255,255,255)] flex items-center justify-start h-[15.5px] w-[6.5px] whitespace-nowrap">1</div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-start gap-x-[5.76px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div></div></div><div class="relative flex-shrink-0 z-[2] self-stretch w-[289px] flex box-border flex-shrink-0 flex-row justify-center items-center gap-x-[6px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-start gap-x-[5.76px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div></div><div class="relative flex-shrink-0 z-[2] w-[17px] flex box-border flex-shrink-0 flex-row justify-center items-start"><div class="relative flex-shrink-0 z-[1] text-[12.96px] font-[JOOXSansBrand] font-medium leading-[15.55px] text-[rgb(255,255,255)] flex items-center justify-start h-[15.5px] w-[8px] whitespace-nowrap">2</div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-start gap-x-[5.76px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div></div></div><div class="relative flex-shrink-0 z-[3] self-stretch w-[289px] flex box-border flex-shrink-0 flex-row justify-center items-center gap-x-[6px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-start gap-x-[5.76px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div></div><div class="relative flex-shrink-0 z-[2] w-[17px] flex box-border flex-shrink-0 flex-row justify-center items-start"><div class="relative flex-shrink-0 z-[1] text-[12.96px] font-[JOOXSansBrand] font-medium leading-[15.55px] text-[rgb(255,255,255)] flex items-center justify-start h-[15.5px] w-[8.5px] whitespace-nowrap">3</div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-start gap-x-[5.76px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div></div></div><div class="relative flex-shrink-0 z-[4] self-stretch w-[289px] flex box-border flex-shrink-0 flex-row justify-center items-center gap-x-[6px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-start gap-x-[5.76px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div></div><div class="relative flex-shrink-0 z-[2] w-[17px] flex box-border flex-shrink-0 flex-row justify-center items-start"><div class="relative flex-shrink-0 z-[1] text-[12.96px] font-[JOOXSansBrand] font-medium leading-[15.55px] text-[rgb(255,255,255)] flex items-center justify-start h-[15.5px] w-[8.5px] whitespace-nowrap">4</div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-start gap-x-[5.76px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div></div></div><div class="relative flex-shrink-0 z-[5] self-stretch w-[289px] flex box-border flex-shrink-0 flex-row justify-center items-center gap-x-[6px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-start gap-x-[5.76px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div></div><div class="relative flex-shrink-0 z-[2] w-[17px] flex box-border flex-shrink-0 flex-row justify-center items-start"><div class="relative flex-shrink-0 z-[1] text-[12.96px] font-[JOOXSansBrand] font-medium leading-[15.55px] text-[rgb(255,255,255)] flex items-center justify-start h-[15.5px] w-[8.5px] whitespace-nowrap">5</div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-start gap-x-[5.76px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[2.88px]"><div class="relative flex-shrink-0 z-[1] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div><div class="relative flex-shrink-0 z-[2] w-[27px] h-[31.5px] flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[4.32px] bg-[rgb(92,92,102)] border-solid box-border border-[0.72px] [border-color:rgb(2,2,2)]"></div><div class="relative flex-shrink-0 z-[3] w-[4px] h-[24px] opacity-[0.6000000238418579] rounded-[2.16px] bg-[rgb(92,92,102)]"></div></div></div></div></div></div></div></div></div><div id="flightmode-wrap" class="invisible pointer-events-none"><iframe id="flightmode-frame" src="./flightmode/index.html" title="Flight Mode"></iframe></div><div id="flight-card-wrap" class="absolute left-[0px] top-[110px] z-[2] w-[375px] h-[calc(815px-110px)] flex items-center justify-center invisible pointer-events-none"><div id="flight-card" class="relative w-[300px] h-auto flex box-border flex-shrink-0 flex-col justify-start items-start rounded-[20.34px] [box-shadow:0px_10.17px_27.12px_0px_rgba(0,0,0,0.25)] overflow-hidden"><div class="relative flex-shrink-0 z-[1] self-stretch w-[300px] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[3.39px] p-[20.34px] bg-[rgb(255,215,0)]"><div class="relative flex-shrink-0 z-[1] self-stretch w-[259px] flex box-border flex-shrink-0 flex-row justify-between items-center"><div class="relative flex-shrink-0 z-[1] text-[20px] font-[JOOXSansBrand] font-bold leading-[24px] text-[rgb(0,0,0)] flex items-center justify-start h-[24px] w-[127.5px] whitespace-nowrap">Focus Airline</div></div><div class="relative flex-shrink-0 z-[2] text-[11.86px] font-[JOOXSansBrand] font-medium leading-[14.24px] text-[rgb(18,19,22)] opacity-[0.699999988079071] flex items-center justify-start h-[14.5px] w-[146px] whitespace-nowrap">Enjoy every focus journey</div></div><div class="relative flex-shrink-0 z-[2] self-stretch w-[300px] h-auto flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[20.34px] pt-[27.12px] pb-[20.34px] px-[20.34px] bg-[rgb(255,255,255)]"><div class="relative flex-shrink-0 z-[1] self-stretch w-[259px] flex box-border flex-shrink-0 flex-row justify-between items-center"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[3.39px]"><div class="relative flex-shrink-0 z-[1] text-[33.9px] font-[JOOXSansBrand] font-extrabold leading-[40.68px] text-[rgb(18,19,22)] flex items-center justify-start h-[41px] w-[70.5px] whitespace-nowrap">BKK</div><div class="relative flex-shrink-0 z-[2] text-[13.56px] font-[JOOXSansBrand] font-medium leading-[16.27px] text-[rgb(142,142,147)] flex items-center justify-start h-[16.5px] w-[81.5px] whitespace-nowrap">曼谷素万那普</div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-col justify-start items-center gap-y-[3.39px]"><div class="relative flex-shrink-0 z-[1] w-[20px] h-[20px] overflow-hidden"><img src="./card-wrapper/static/Vector_13fb1f.svg" class="absolute left-[0.5px] top-[3.5px] z-[1] w-[18.5px] h-[15.5px]" style="object-fit:cover" /></div><div class="relative flex-shrink-0 z-[2] text-[10.17px] font-[JOOXSansBrand] font-semibold leading-[12.2px] text-[rgb(142,142,147)] flex items-center justify-start h-[12.5px] w-[25.5px] whitespace-nowrap">30 m</div></div><div class="relative flex-shrink-0 z-[3] flex box-border flex-shrink-0 flex-col justify-start items-end gap-y-[3.39px]"><div class="relative flex-shrink-0 z-[1] text-[33.9px] font-[JOOXSansBrand] font-extrabold leading-[40.68px] text-[rgb(18,19,22)] flex items-center justify-start h-[41px] w-[74px] whitespace-nowrap">HKG</div><div class="relative flex-shrink-0 z-[2] text-[13.56px] font-[JOOXSansBrand] font-medium leading-[16.27px] text-[rgb(142,142,147)] flex items-center justify-start h-[16.5px] w-[81.5px] whitespace-nowrap">香港国际机场</div></div></div><div class="relative flex-shrink-0 z-[2] self-stretch w-[259px] h-[119px]"><div class="absolute left-[0px] top-[0px] z-[1] w-[118.5px] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[3.39px]"><div class="relative flex-shrink-0 z-[1] self-stretch text-[11.02px] font-[JOOXSansBrand] font-medium leading-[13.22px] text-[rgb(142,142,147)] self-stretch items-start h-[13.5px] w-[118.5px] min-w-0 whitespace-normal break-words">Flight</div><div class="relative flex-shrink-0 z-[2] self-stretch text-[13.56px] font-[JOOXSansBrand] font-bold leading-[16.27px] text-[rgb(18,19,22)] self-stretch items-start h-[16.5px] w-[118.5px] min-w-0 whitespace-normal break-words">AXS 655</div></div><div class="absolute left-[140.5px] top-[0px] z-[2] w-[118.5px] flex box-border flex-shrink-0 flex-col justify-start items-end gap-y-[3.39px]"><div class="relative flex-shrink-0 z-[1] self-stretch text-[11.02px] font-[JOOXSansBrand] font-medium leading-[13.22px] text-[rgb(142,142,147)] self-stretch items-start h-[13.5px] w-[118.5px] text-right min-w-0 whitespace-normal break-words">Class</div><div class="relative flex-shrink-0 z-[2] self-stretch text-[13.56px] font-[JOOXSansBrand] font-bold leading-[16.27px] text-[rgb(18,19,22)] self-stretch items-start h-[16.5px] w-[118.5px] text-right min-w-0 whitespace-normal break-words">Business</div></div><div class="absolute left-[0px] top-[43px] z-[3] w-[118.5px] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[3.39px]"><div class="relative flex-shrink-0 z-[1] self-stretch text-[11.02px] font-[JOOXSansBrand] font-medium leading-[13.22px] text-[rgb(142,142,147)] self-stretch items-start h-[13.5px] w-[118.5px] min-w-0 whitespace-normal break-words">Seat</div><div class="relative flex-shrink-0 z-[2] self-stretch text-[13.56px] font-[JOOXSansBrand] font-bold leading-[16.27px] text-[rgb(18,19,22)] self-stretch items-start h-[16.5px] w-[118.5px] min-w-0 whitespace-normal break-words" id="card-seat-label">2B</div></div><div class="absolute left-[140.5px] top-[43px] z-[4] w-[118.5px] flex box-border flex-shrink-0 flex-col justify-start items-end gap-y-[3.39px]"><div class="relative flex-shrink-0 z-[1] self-stretch text-[11.02px] font-[JOOXSansBrand] font-medium leading-[13.22px] text-[rgb(142,142,147)] self-stretch items-start h-[13.5px] w-[118.5px] text-right min-w-0 whitespace-normal break-words">Gate</div><div class="relative flex-shrink-0 z-[2] self-stretch text-[13.56px] font-[JOOXSansBrand] font-bold leading-[16.27px] text-[rgb(18,19,22)] self-stretch items-start h-[16.5px] w-[118.5px] text-right min-w-0 whitespace-normal break-words">T85</div></div><div class="absolute left-[0px] top-[86px] z-[5] w-[118.5px] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[3.39px]"><div class="relative flex-shrink-0 z-[1] self-stretch text-[11.02px] font-[JOOXSansBrand] font-medium leading-[13.22px] text-[rgb(142,142,147)] self-stretch items-start h-[13.5px] w-[118.5px] min-w-0 whitespace-normal break-words">Terminal</div><div class="relative flex-shrink-0 z-[2] self-stretch text-[13.56px] font-[JOOXSansBrand] font-bold leading-[16.27px] text-[rgb(18,19,22)] self-stretch items-start h-[16.5px] w-[118.5px] min-w-0 whitespace-normal break-words">T1</div></div><div class="absolute left-[140.5px] top-[86px] z-[6] w-[118.5px] flex box-border flex-shrink-0 flex-col justify-start items-end gap-y-[3.39px]"><div class="relative flex-shrink-0 z-[1] self-stretch text-[11.02px] font-[JOOXSansBrand] font-medium leading-[13.22px] text-[rgb(142,142,147)] self-stretch items-start h-[13.5px] w-[118.5px] text-right min-w-0 whitespace-normal break-words">Boarding Time</div><div class="relative flex-shrink-0 z-[2] self-stretch text-[13.56px] font-[JOOXSansBrand] font-bold leading-[16.27px] text-[rgb(18,19,22)] self-stretch items-start h-[16.5px] w-[118.5px] text-right min-w-0 whitespace-normal break-words">Now</div></div></div></div><div class="card-divider relative flex-shrink-0 z-[3] self-stretch w-[300px] h-[27px]"></div><div class="relative flex-shrink-0 z-[4] self-stretch w-[300px] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[20.34px] p-[20.34px] pb-[24px] bg-[rgb(255,255,255)] rounded-b-[20.34px]"><div class="relative flex-shrink-0 z-[1] self-stretch w-[259px] flex box-border flex-shrink-0 flex-row justify-between items-start"><div class="relative flex-shrink-0 z-[1] flex-1 w-[184.5px] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[10.17px]"><div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[1.69px]"><div class="relative flex-shrink-0 z-[1] text-[10.17px] font-[JOOXSansBrand] font-semibold leading-[12.2px] text-[rgb(142,142,147)] flex items-center justify-start h-[12.5px] w-[30px] whitespace-nowrap">FROM</div><div class="relative flex-shrink-0 z-[2] text-[11.86px] font-[JOOXSansBrand] font-bold leading-[14.24px] text-[rgb(18,19,22)] flex items-center justify-start h-[14.5px] w-[79.5px] whitespace-nowrap">BKK/Bangkok</div></div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[1.69px]"><div class="relative flex-shrink-0 z-[1] text-[10.17px] font-[JOOXSansBrand] font-semibold leading-[12.2px] text-[rgb(142,142,147)] flex items-center justify-start h-[12.5px] w-[14.5px] whitespace-nowrap">TO</div><div class="relative flex-shrink-0 z-[2] text-[11.86px] font-[JOOXSansBrand] font-bold leading-[14.24px] text-[rgb(18,19,22)] flex items-center justify-start h-[14.5px] w-[94px] whitespace-nowrap">HKG/Hong Kong</div></div></div><img src="./card-wrapper/static/qr-code_c0af2e.png" class="relative flex-shrink-0 z-[2] w-[74.5px] h-[74.5px] rounded-[6.78px] overflow-hidden" style="object-fit:cover" /></div><div class="relative flex-shrink-0 z-[2] self-stretch w-[259px] flex box-border flex-shrink-0 flex-row justify-start items-start gap-x-[27.12px]"><div class="relative flex-shrink-0 z-[1] flex-1 w-[116px] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[3.39px]"><div class="relative flex-shrink-0 z-[1] self-stretch text-[11.02px] font-[JOOXSansBrand] font-medium leading-[13.22px] text-[rgb(142,142,147)] self-stretch items-start h-[13.5px] w-[116px] min-w-0 whitespace-normal break-words">Flight</div><div class="relative flex-shrink-0 z-[2] self-stretch text-[11.86px] font-[JOOXSansBrand] font-bold leading-[14.24px] text-[rgb(18,19,22)] self-stretch items-start h-[14.5px] w-[116px] min-w-0 whitespace-normal break-words">AXS 655</div></div><div class="relative flex-shrink-0 z-[2] flex-1 w-[116px] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[3.39px]"><div class="relative flex-shrink-0 z-[1] self-stretch text-[11.02px] font-[JOOXSansBrand] font-medium leading-[13.22px] text-[rgb(142,142,147)] self-stretch items-start h-[13.5px] w-[116px] min-w-0 whitespace-normal break-words">Date</div><div class="relative flex-shrink-0 z-[2] self-stretch text-[11.86px] font-[JOOXSansBrand] font-bold leading-[14.24px] text-[rgb(18,19,22)] self-stretch items-start h-[14.5px] w-[116px] min-w-0 whitespace-normal break-words">09 JUN 2026</div></div></div></div></div></div><div id="status-bar" class="absolute left-[0px] top-[0px] z-[10] w-[375px] h-[41px] flex box-border flex-shrink-0 flex-row justify-between items-center px-[22.39px]"><div class="relative flex-shrink-0 z-[1] text-[13.99px] font-[JOOXSansBrand] font-semibold leading-[16.79px] text-[rgb(255,255,255)] flex items-center justify-start h-[17px] w-[29.5px] whitespace-nowrap">9:41</div><div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[5.6px]"><div class="relative flex-shrink-0 z-[1] w-[16.5px] h-[16.5px] overflow-hidden"><img src="./static/Vector_5fe579.svg" class="absolute left-[0px] top-[4.5px] z-[1] w-[12px] h-[10px]" style="object-fit:cover" /></div><div class="relative flex-shrink-0 z-[2] w-[16.5px] h-[16.5px] overflow-hidden"><img src="./static/Vector_4878a4.svg" class="absolute left-[0px] top-[2.5px] z-[1] w-[15.5px] h-[12px]" style="object-fit:cover" /></div><div class="relative flex-shrink-0 z-[3] w-[23px] h-[11px] flex box-border flex-shrink-0 flex-row justify-start items-start p-[0.93px] rounded-[2.8px] border-solid box-border border-[0.93px] [border-color:rgb(255,255,255)]"><div class="relative flex-shrink-0 z-[1] self-stretch w-[16.5px] h-[9px] rounded-[0.93px] bg-[rgb(255,255,255)]"></div></div></div></div><div id="top-nav" class="absolute left-[25px] top-[53.5px] z-[11] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[63.5px]"><img src="./static/back-btn_3c5bec.svg" class="relative flex-shrink-0 z-[1] w-[40px] h-[40px] rounded-[20px] overflow-hidden" style="object-fit:cover" /><div class="relative flex-shrink-0 z-[2] w-[118.5px] flex box-border flex-shrink-0 flex-row justify-center items-center gap-x-[7.08px] py-[9.45px] px-[14.17px] rounded-[118.08px] bg-[rgba(255,255,255,0.1)] border-solid box-border border-[1.18px] [border-color:rgba(255,255,255,0.1)] [backdrop-filter:blur(14.17px)]"><div class="relative flex-shrink-0 z-[1] w-[16px] h-[16px] overflow-hidden"><img src="./static/Vector_24f8bd.svg" class="absolute left-[2px] top-[2px] z-[1] w-[11px] h-[12px]" style="object-fit:cover" /></div><div class="relative flex-shrink-0 z-[2] text-[14.17px] font-[JOOXSansBrand] font-medium leading-[17px] text-[rgb(255,255,255)] flex items-center justify-start h-[17px] w-[40px] whitespace-nowrap">Study</div></div><img src="./static/route-btn_600366.svg" class="relative flex-shrink-0 z-[3] w-[40px] h-[40px] rounded-[20px] overflow-hidden" style="object-fit:cover" /></div></div>
+    <script>
+      (function () {
+        const LEFT_COLS = ["A", "B", "C"];
+        const RIGHT_COLS = ["J", "K", "L"];
+        const DURATION_MS = 1000;
+        const EXIT_DELAY_MS = 500;
+
+        const rowsContainer = document.getElementById("seat-rows");
+        const seatLabel = document.getElementById("seat-label");
+        const ticketContent = document.getElementById("ticket-content");
+        const flightCardWrap = document.getElementById("flight-card-wrap");
+        const flightCard = document.getElementById("flight-card");
+        const cardSeatLabel = document.getElementById("card-seat-label");
+        const statusBar = document.getElementById("status-bar");
+        const topNav = document.getElementById("top-nav");
+        const flightmodeWrap = document.getElementById("flightmode-wrap");
+        const flightmodeFrame = document.getElementById("flightmode-frame");
+        const checkinSound = document.getElementById("checkin-sound");
+        const TRANSITION_MS = 1000;
+        let transitionedToFlightmode = false;
+        let isTransitioning = false;
+        const seats = [];
+
+        Array.from(rowsContainer.children).forEach((rowEl, rowIndex) => {
+          const rowNum = rowIndex + 1;
+          const groups = [rowEl.children[0], rowEl.children[2]];
+
+          groups.forEach((group, sideIndex) => {
+            const cols = sideIndex === 0 ? LEFT_COLS : RIGHT_COLS;
+            Array.from(group.children).forEach((unit, colIndex) => {
+              const seatId = `${rowNum}${cols[colIndex]}`;
+              unit.classList.add("seat-unit");
+              unit.dataset.seat = seatId;
+
+              Array.from(unit.children).forEach((part, partIndex) => {
+                part.classList.add("seat-part");
+                if (partIndex !== 1) {
+                  part.classList.add("seat-armrest");
+                }
+              });
+
+              seats.push(unit);
+            });
+          });
+        });
+
+        let currentSeat = null;
+        let audioReady = false;
+        let experienceStarted = false;
+        const finalSeat = seats[Math.floor(Math.random() * seats.length)];
+        const stage = ticketContent.parentElement;
+
+        function unlockAudio() {
+          checkinSound.volume = 1;
+          checkinSound.muted = true;
+          return checkinSound.play().then(() => {
+            checkinSound.pause();
+            checkinSound.currentTime = 0;
+            checkinSound.muted = false;
+            audioReady = true;
+          });
+        }
+
+        function playCheckinSound() {
+          checkinSound.muted = false;
+          checkinSound.currentTime = 0;
+          const attempt = () => checkinSound.play();
+          if (audioReady) {
+            attempt().catch(() => {});
+            return;
+          }
+          unlockAudio()
+            .then(attempt)
+            .catch(() => {});
+        }
+
+        function bindAudioUnlock() {
+          const tryUnlock = () => {
+            if (audioReady) return;
+            unlockAudio().catch(() => {});
+          };
+          document.addEventListener("pointerdown", tryUnlock, { passive: true });
+          document.addEventListener("keydown", tryUnlock);
+        }
+
+        function initExperience() {
+          bindAudioUnlock();
+
+          function onStartClick() {
+            if (experienceStarted) return;
+            experienceStarted = true;
+            stage.removeEventListener("click", onStartClick);
+            stage.style.cursor = "";
+            unlockAudio().catch(() => {});
+            startSelection();
+          }
+
+          stage.addEventListener("click", onStartClick);
+          stage.style.cursor = "pointer";
+        }
+
+        function startExitAnimation() {
+          cardSeatLabel.textContent = finalSeat.dataset.seat;
+          ticketContent.classList.add("exit-up");
+          flightCardWrap.classList.remove("invisible", "pointer-events-none");
+          flightCardWrap.classList.add("show");
+          playCheckinSound();
+        }
+
+        function resetFlightmode() {
+          flightmodeFrame.contentWindow?.postMessage({ type: "flightmode-reset" }, "*");
+        }
+
+        function startFlightmodeTransition() {
+          if (
+            isTransitioning ||
+            transitionedToFlightmode ||
+            !flightCardWrap.classList.contains("show")
+          ) {
+            return;
+          }
+          isTransitioning = true;
+          transitionedToFlightmode = true;
+
+          resetFlightmode();
+
+          flightCard.classList.add("exit-down");
+          statusBar.classList.add("exit-up-nav");
+          topNav.classList.add("exit-up-nav");
+          flightmodeWrap.classList.remove("invisible", "pointer-events-none", "exit");
+          flightmodeWrap.classList.add("show");
+
+          setTimeout(() => {
+            flightCardWrap.classList.add("pointer-events-none");
+            isTransitioning = false;
+          }, TRANSITION_MS);
+        }
+
+        function startBoardingCardTransition() {
+          if (isTransitioning || !transitionedToFlightmode) {
+            return;
+          }
+          isTransitioning = true;
+
+          resetFlightmode();
+
+          flightmodeWrap.classList.remove("show");
+          flightmodeWrap.classList.add("exit");
+
+          flightCard.classList.remove("exit-down");
+          flightCard.classList.add("enter-back");
+          statusBar.classList.remove("exit-up-nav");
+          topNav.classList.remove("exit-up-nav");
+          statusBar.classList.add("enter-back-nav");
+          topNav.classList.add("enter-back-nav");
+          flightCardWrap.classList.remove("pointer-events-none");
+
+          setTimeout(() => {
+            flightmodeWrap.classList.add("invisible", "pointer-events-none");
+            flightmodeWrap.classList.remove("exit");
+            flightCard.classList.remove("enter-back");
+            statusBar.classList.remove("enter-back-nav");
+            topNav.classList.remove("enter-back-nav");
+            transitionedToFlightmode = false;
+            isTransitioning = false;
+          }, TRANSITION_MS);
+        }
+
+        flightCard.addEventListener("click", startFlightmodeTransition);
+
+        window.addEventListener("message", (event) => {
+          if (event.data && event.data.type === "flightmode-exit") {
+            startBoardingCardTransition();
+          }
+        });
+
+        function highlightSeat(seatEl) {
+          if (currentSeat) {
+            currentSeat.classList.remove("selected");
+          }
+          currentSeat = seatEl;
+          if (currentSeat) {
+            currentSeat.classList.add("selected");
+            seatLabel.textContent = currentSeat.dataset.seat;
+          }
+        }
+
+        function pickRandomSeat() {
+          if (seats.length <= 1) {
+            return seats[0];
+          }
+          let next = seats[Math.floor(Math.random() * seats.length)];
+          while (next === currentSeat) {
+            next = seats[Math.floor(Math.random() * seats.length)];
+          }
+          return next;
+        }
+
+        function startSelection() {
+          const startTime = performance.now();
+
+          function tick(now) {
+            const elapsed = now - startTime;
+
+            if (elapsed >= DURATION_MS) {
+              highlightSeat(finalSeat);
+              setTimeout(startExitAnimation, EXIT_DELAY_MS);
+              return;
+            }
+
+            highlightSeat(pickRandomSeat());
+            const progress = elapsed / DURATION_MS;
+            const delay = 220 - progress * 140;
+            setTimeout(() => tick(performance.now()), delay);
+          }
+
+          tick(startTime);
+        }
+
+        initExperience();
+      })();
+    </script>
+  </body>
+</html>

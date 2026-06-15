@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>flightmode</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @font-face {
+        font-family: "JOOXSansBrand";
+        src: url("../static/JOOXSansBrand-Regular.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+      body {
+        font-family: "JOOXSansBrand", sans-serif;
+      }
+
+      #phone-notch,
+      #phone-earpiece {
+        transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      #phone-notch.shutter-closed {
+        left: 0px !important;
+        top: -6px !important;
+        width: 183px !important;
+        height: 332px !important;
+        border-bottom-left-radius: 96px !important;
+        border-bottom-right-radius: 96px !important;
+      }
+
+      #phone-earpiece.shutter-closed {
+        top: 310px !important;
+        left: 76px !important;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="relative w-[375px] h-[811.5px]">
+      <div class="absolute left-[0px] top-[0px] z-[1] w-[375px] h-[811.5px] flex box-border flex-shrink-0 flex-col justify-between items-center overflow-hidden bg-[rgb(5,5,5)]">
+        <div class="relative flex-shrink-0 z-[1] w-[375px] h-[41px] flex box-border flex-shrink-0 flex-row justify-between items-center px-[22.39px]">
+          <div class="relative flex-shrink-0 z-[1] text-[13.99px] font-[JOOXSansBrand] font-semibold leading-[16.79px] text-[rgb(255,255,255)] flex items-center justify-start h-[17px] w-[29.5px] whitespace-nowrap">9:41</div>
+          <div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[5.6px]">
+            <div class="relative flex-shrink-0 z-[1] w-[16.5px] h-[16.5px] overflow-hidden"><img src="./static/Vector_5fe579.svg" class="absolute left-[0px] top-[4.5px] z-[1] w-[12px] h-[10px]" style="object-fit:cover" /></div>
+            <div class="relative flex-shrink-0 z-[2] w-[16.5px] h-[16.5px] overflow-hidden"><img src="./static/Vector_4878a4.svg" class="absolute left-[0px] top-[2.5px] z-[1] w-[15.5px] h-[12px]" style="object-fit:cover" /></div>
+            <div class="relative flex-shrink-0 z-[3] w-[23px] h-[11px] flex box-border flex-shrink-0 flex-row justify-start items-start p-[0.93px] rounded-[2.8px] border-solid box-border border-[0.93px] [border-color:rgb(255,255,255)]"><div class="relative flex-shrink-0 z-[1] self-stretch w-[16.5px] h-[9px] rounded-[0.93px] bg-[rgb(255,255,255)]"></div></div>
+          </div>
+        </div>
+        <img src="./static/Frame_5768c6.svg" class="relative flex-shrink-0 z-[2] w-[162.5px] h-[46px]" style="object-fit:cover" />
+        <button id="exit-btn" type="button" aria-label="Exit flight mode" style="position:absolute;left:50%;top:41px;margin-left:56px;width:42px;height:42px;z-index:20;cursor:pointer;border-radius:50%;background:transparent;border:none;-webkit-tap-highlight-color:transparent"></button>
+        <div class="relative flex-shrink-0 z-[3] w-[375px] h-[90.5px] flex box-border flex-shrink-0 flex-col justify-end items-start">
+          <div class="relative flex-shrink-0 z-[1] self-stretch w-[375px] h-[121px] flex box-border flex-shrink-0 flex-row justify-between items-end pt-[30px] pb-[15.38px] px-[23.08px]">
+            <div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[3.85px]">
+              <div id="time-display" class="relative flex-shrink-0 z-[1] text-[34.62px] font-[JOOXSansBrand] font-bold leading-[41.54px] tracking-[-0.69px] text-[rgb(255,255,255)] flex items-center justify-start h-[42px] w-[105px] whitespace-nowrap">30:00</div>
+              <div class="relative flex-shrink-0 z-[2] text-[12.5px] font-[JOOXSansBrand] font-medium leading-[15px] tracking-[0.25px] text-[rgb(161,161,161)] flex items-center justify-start h-[15px] w-[87px] whitespace-nowrap">Time to Dest</div>
+            </div>
+            <div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-col justify-start items-end gap-y-[3.85px]">
+              <div id="dist-display" class="relative flex-shrink-0 z-[1] text-[34.62px] font-[JOOXSansBrand] font-bold leading-[41.54px] tracking-[-0.69px] text-[rgb(255,255,255)] flex items-center justify-end h-[42px] w-[129.5px] whitespace-nowrap">200 km</div>
+              <div class="relative flex-shrink-0 z-[2] text-[12.5px] font-[JOOXSansBrand] font-medium leading-[15px] tracking-[0.25px] text-[rgb(161,161,161)] flex items-center justify-start h-[15px] w-[85.5px] whitespace-nowrap">Dist to Dest</div>
+            </div>
+          </div>
+        </div>
+        <div class="relative flex-shrink-0 z-[4] self-stretch w-[375px] h-[409px]">
+          <div class="absolute left-[33.5px] top-[-26px] z-[1] flex box-border flex-shrink-0 flex-row justify-start items-start">
+            <div class="relative flex-shrink-0 z-[1] w-[307.5px] h-[442px] flex box-border flex-shrink-0 flex-row justify-center items-center rounded-[153.85px]">
+              <div class="relative flex-shrink-0 z-[1] w-[211.5px] h-[349px] flex box-border flex-shrink-0 flex-row justify-center items-center p-[3px] rounded-[110.5px] border-solid box-border border-[11.5px] [border-color:rgb(51,51,51)]">
+                <div class="relative flex-shrink-0 z-[1] w-[182.5px] h-[319px] flex box-border flex-shrink-0 flex-row justify-start items-start overflow-hidden rounded-[96.15px] border-solid box-border border-[3.5px] [border-color:rgb(224,224,224)]">
+                  <video id="phone-video" src="./video1.mp4" class="relative flex-shrink-0 z-[1] w-[175.5px] h-[319px]" style="object-fit:cover;object-position:50% 50%" autoplay muted playsinline loop></video>
+                  <div id="phone-notch" class="absolute left-[32.5px] top-[-5.5px] z-[2] w-[115px] h-[57.5px] rounded-br-[57px] rounded-bl-[57px] bg-[rgb(34,34,34)]" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden">
+                    <div id="notch-label" style="opacity:0;transition:opacity 0.25s ease;text-align:center;pointer-events:none;white-space:nowrap">
+                      <div style="font-size:20px;font-weight:700;color:#fff;line-height:1.3;letter-spacing:0.5px"></div>
+                      <div style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.55);line-height:1.4"></div>
+                    </div>
+                  </div>
+                  <div id="phone-earpiece" class="absolute left-[75.5px] top-[40px] z-[3] w-[30px] h-[3.5px] rounded-[1.92px] bg-[rgb(51,51,51)]"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="relative flex-shrink-0 z-[5] w-[375px] h-[110.5px]">
+          <div class="absolute left-[0px] top-[0px] z-[1] w-[375px] h-[110.5px] bg-[rgba(11,11,11,0)]"></div>
+          <img src="./static/Frame_1912055138_faaa1f.svg" class="absolute left-[86.5px] top-[20.5px] z-[2] w-[202px] h-[70px]" style="object-fit:cover" />
+          <button id="play-pause-btn" style="position:absolute;left:157px;top:15px;width:60px;height:60px;z-index:10;cursor:pointer;border-radius:50%;background:transparent;border:none;-webkit-tap-highlight-color:transparent"></button>
+          <button id="next-song-btn" style="position:absolute;left:258px;top:35px;width:40px;height:40px;z-index:10;cursor:pointer;border-radius:50%;background:transparent;border:none;-webkit-tap-highlight-color:transparent"></button>
+        </div>
+        <div class="relative flex-shrink-0 z-[6] self-stretch w-[375px] h-[32.5px] flex box-border flex-shrink-0 flex-row justify-center items-center">
+          <div class="relative flex-shrink-0 z-[1] w-[128.5px] h-[4.5px] opacity-[0.30000001192092896] rounded-[2.4px] bg-[rgb(255,255,255)]"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const categories = [
+        {
+          en: 'Fitness', zh: '健身运动',
+          video: './video1.mp4',
+          songs: ['./songs/High.MP3', './songs/健身房.mp3'],
+        },
+        {
+          en: 'Chill', zh: '舒缓放松',
+          video: './video2.mp4',
+          songs: ['./songs/誓言A Thousand Years-Christina Perri.mp3', './songs/钢琴1.mp3'],
+        },
+        {
+          en: 'Commute', zh: '通勤背景',
+          video: './video3.mp4',
+          songs: ['./songs/枫.mp3', './songs/3.mp3'],
+        },
+      ];
+
+      let catIndex = 0;
+      let songIndex = 0;
+      let isAnimating = false;
+
+      const notch = document.getElementById('phone-notch');
+      const earpiece = document.getElementById('phone-earpiece');
+      const video = document.getElementById('phone-video');
+      const notchLabel = document.getElementById('notch-label');
+      const labelEn = notchLabel.children[0];
+      const labelZh = notchLabel.children[1];
+      const nextSongBtn = document.getElementById('next-song-btn');
+
+      const audio = new Audio();
+      audio.loop = false;
+      audio.addEventListener('ended', () => {
+        songIndex = (songIndex + 1) % categories[catIndex].songs.length;
+        audio.src = categories[catIndex].songs[songIndex];
+        audio.play();
+      });
+
+      function playSong() {
+        audio.src = categories[catIndex].songs[songIndex];
+        audio.play().catch(() => {});
+      }
+
+      const TOTAL_SECONDS = 30 * 60;
+      const TOTAL_DIST = 200;
+      let remainingSeconds = TOTAL_SECONDS;
+
+      const timeDisplay = document.getElementById('time-display');
+      const distDisplay = document.getElementById('dist-display');
+
+      function formatTime(s) {
+        const m = Math.floor(s / 60);
+        const sec = s % 60;
+        return `${m}:${sec.toString().padStart(2, '0')}`;
+      }
+
+      function updateCountdown() {
+        timeDisplay.textContent = formatTime(remainingSeconds);
+        const dist = Math.round(TOTAL_DIST * (remainingSeconds / TOTAL_SECONDS));
+        distDisplay.textContent = `${dist} km`;
+      }
+
+      let countdownTimer = null;
+      function startCountdown() {
+        if (countdownTimer) return;
+        countdownTimer = setInterval(() => {
+          if (remainingSeconds > 0) {
+            remainingSeconds--;
+            updateCountdown();
+          } else {
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+          }
+        }, 1000);
+      }
+
+      let started = false;
+      let paused = false;
+      let firstClickBound = false;
+
+      function bindFirstClickStart() {
+        if (firstClickBound) return;
+        firstClickBound = true;
+        document.addEventListener('click', onDocumentFirstClick, { once: true });
+      }
+
+      function onDocumentFirstClick(e) {
+        firstClickBound = false;
+        if (
+          !started &&
+          !e.target.closest('#phone-notch') &&
+          !e.target.closest('#next-song-btn') &&
+          !e.target.closest('#exit-btn')
+        ) {
+          togglePlayPause();
+        } else if (!started) {
+          bindFirstClickStart();
+        }
+      }
+
+      function resetToInitial() {
+        paused = false;
+        started = false;
+        isAnimating = false;
+        catIndex = 0;
+        songIndex = 0;
+
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = '';
+
+        if (countdownTimer) {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+        }
+        remainingSeconds = TOTAL_SECONDS;
+        updateCountdown();
+
+        notch.classList.remove('shutter-closed');
+        earpiece.classList.remove('shutter-closed');
+        notchLabel.style.opacity = '0';
+
+        video.src = categories[0].video;
+        video.load();
+        video.play().catch(() => {});
+
+        bindFirstClickStart();
+      }
+
+      bindFirstClickStart();
+
+      function pauseAll() {
+        paused = true;
+        audio.pause();
+        if (countdownTimer) {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+        }
+      }
+
+      function resumeAll() {
+        paused = false;
+        audio.play().catch(() => {});
+        startCountdown();
+      }
+
+      function togglePlayPause(e) {
+        if (isAnimating) return;
+        if (!started) {
+          started = true;
+          playSong();
+          startCountdown();
+          return;
+        }
+        if (paused) {
+          resumeAll();
+        } else {
+          pauseAll();
+        }
+      }
+
+      const playPauseBtn = document.getElementById('play-pause-btn');
+      playPauseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePlayPause();
+      });
+
+      notch.addEventListener('click', () => {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const nextCat = (catIndex + 1) % categories.length;
+        const cat = categories[nextCat];
+        labelEn.textContent = cat.en;
+        labelZh.textContent = cat.zh;
+
+        notch.classList.add('shutter-closed');
+        earpiece.classList.add('shutter-closed');
+
+        setTimeout(() => {
+          notchLabel.style.opacity = '1';
+        }, 300);
+
+        setTimeout(() => {
+          catIndex = nextCat;
+          songIndex = 0;
+
+          video.src = cat.video;
+          video.load();
+          video.play();
+          playSong();
+        }, 800);
+
+        setTimeout(() => {
+          notchLabel.style.opacity = '0';
+
+          setTimeout(() => {
+            notch.classList.remove('shutter-closed');
+            earpiece.classList.remove('shutter-closed');
+
+            setTimeout(() => {
+              isAnimating = false;
+            }, 460);
+          }, 300);
+        }, 1400);
+      });
+
+      nextSongBtn.addEventListener('click', () => {
+        if (isAnimating) return;
+        songIndex = (songIndex + 1) % categories[catIndex].songs.length;
+        playSong();
+      });
+
+      const exitBtn = document.getElementById('exit-btn');
+      exitBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        resetToInitial();
+        if (window.parent !== window) {
+          window.parent.postMessage({ type: 'flightmode-exit' }, '*');
+        }
+      });
+
+      window.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'flightmode-reset') {
+          resetToInitial();
+        }
+      });
+    </script>
+  </body>
+</html>
