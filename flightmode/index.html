@@ -136,6 +136,7 @@
       function playSong() {
         audio.src = categories[catIndex].songs[songIndex];
         audio.play().catch(() => {});
+        if (!countdownTimer) startCountdown();
       }
 
       let TOTAL_SECONDS = 10 * 60;
