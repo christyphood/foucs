@@ -251,7 +251,7 @@
         let transitionedToFlightmode = false;
         let isTransitioning = false;
         let boardingCardVisible = false;
-        let storedDurationMinutes = 10;
+        let storedDurationMinutes = 30;
         const seats = [];
 
         Array.from(rowsContainer.children).forEach((rowEl, rowIndex) => {
@@ -392,7 +392,6 @@
           function sendFlightmodeStart() {
             const w = flightmodeFrame.contentWindow;
             if (!w) return;
-            w.postMessage({ type: "set-duration", minutes: storedDurationMinutes }, "*");
             w.postMessage({ type: "autostart" }, "*");
           }
 
@@ -482,14 +481,13 @@
             if (el4) el4.textContent = code + "/" + shortEnglish;
           }
           if (event.data.type === "set-duration") {
-            const mins = event.data.minutes || 10;
+            const mins = event.data.minutes || 30;
             storedDurationMinutes = mins;
             const label = mins >= 60 ? Math.floor(mins / 60) + "h" + (mins % 60 ? mins % 60 + "m" : "") : mins + " m";
             const el1 = document.getElementById("duration-ticket");
             const el2 = document.getElementById("duration-card");
             if (el1) el1.textContent = label;
             if (el2) el2.textContent = label;
-            flightmodeFrame.contentWindow?.postMessage({ type: "set-duration", minutes: mins }, "*");
           }
         });
 

@@ -342,7 +342,7 @@
           resetToInitial();
         }
         if (event.data.type === 'set-duration') {
-          const mins = event.data.minutes || 10;
+          const mins = event.data.minutes || 30;
           TOTAL_SECONDS = mins * 60;
           TOTAL_DIST = Math.round(mins * 200 / 30);
           remainingSeconds = TOTAL_SECONDS;
