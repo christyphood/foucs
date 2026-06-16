@@ -43,7 +43,7 @@
     <div class="relative w-[375px] h-[811.5px]">
       <div class="absolute left-[0px] top-[0px] z-[1] w-[375px] h-[811.5px] flex box-border flex-shrink-0 flex-col justify-between items-center overflow-hidden bg-[rgb(5,5,5)]">
         <div class="relative flex-shrink-0 z-[1] w-[375px] h-[41px] flex box-border flex-shrink-0 flex-row justify-between items-center px-[22.39px]">
-          <div id="status-countdown" class="relative flex-shrink-0 z-[1] text-[13.99px] font-[JOOXSansBrand] font-semibold leading-[16.79px] text-[rgb(255,255,255)] flex items-center justify-start h-[17px] min-w-[29.5px] whitespace-nowrap">10:00</div>
+          <div id="status-countdown" class="relative flex-shrink-0 z-[1] text-[13.99px] font-[JOOXSansBrand] font-semibold leading-[16.79px] text-[rgb(255,255,255)] flex items-center justify-start h-[17px] min-w-[29.5px] whitespace-nowrap">40:00</div>
           <div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[5.6px]">
             <div class="relative flex-shrink-0 z-[1] w-[16.5px] h-[16.5px] overflow-hidden"><img src="./static/Vector_5fe579.svg" class="absolute left-[0px] top-[4.5px] z-[1] w-[12px] h-[10px]" style="object-fit:cover" /></div>
             <div class="relative flex-shrink-0 z-[2] w-[16.5px] h-[16.5px] overflow-hidden"><img src="./static/Vector_4878a4.svg" class="absolute left-[0px] top-[2.5px] z-[1] w-[15.5px] h-[12px]" style="object-fit:cover" /></div>
@@ -55,11 +55,11 @@
         <div class="relative flex-shrink-0 z-[3] w-[375px] h-[90.5px] flex box-border flex-shrink-0 flex-col justify-end items-start">
           <div class="relative flex-shrink-0 z-[1] self-stretch w-[375px] h-[121px] flex box-border flex-shrink-0 flex-row justify-between items-end pt-[30px] pb-[15.38px] px-[23.08px]">
             <div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[3.85px]">
-              <div id="time-display" class="relative flex-shrink-0 z-[1] text-[34.62px] font-[JOOXSansBrand] font-bold leading-[41.54px] tracking-[-0.69px] text-[rgb(255,255,255)] flex items-center justify-start h-[42px] w-[105px] whitespace-nowrap">10:00</div>
+              <div id="time-display" class="relative flex-shrink-0 z-[1] text-[34.62px] font-[JOOXSansBrand] font-bold leading-[41.54px] tracking-[-0.69px] text-[rgb(255,255,255)] flex items-center justify-start h-[42px] w-[105px] whitespace-nowrap">40:00</div>
               <div class="relative flex-shrink-0 z-[2] text-[12.5px] font-[JOOXSansBrand] font-medium leading-[15px] tracking-[0.25px] text-[rgb(161,161,161)] flex items-center justify-start h-[15px] w-[87px] whitespace-nowrap">Time to Dest</div>
             </div>
             <div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-col justify-start items-end gap-y-[3.85px]">
-              <div id="dist-display" class="relative flex-shrink-0 z-[1] text-[34.62px] font-[JOOXSansBrand] font-bold leading-[41.54px] tracking-[-0.69px] text-[rgb(255,255,255)] flex items-center justify-end h-[42px] w-[129.5px] whitespace-nowrap">67 km</div>
+              <div id="dist-display" class="relative flex-shrink-0 z-[1] text-[34.62px] font-[JOOXSansBrand] font-bold leading-[41.54px] tracking-[-0.69px] text-[rgb(255,255,255)] flex items-center justify-end h-[42px] w-[129.5px] whitespace-nowrap">267 km</div>
               <div class="relative flex-shrink-0 z-[2] text-[12.5px] font-[JOOXSansBrand] font-medium leading-[15px] tracking-[0.25px] text-[rgb(161,161,161)] flex items-center justify-start h-[15px] w-[85.5px] whitespace-nowrap">Dist to Dest</div>
             </div>
           </div>
@@ -139,8 +139,8 @@
         if (!countdownTimer) startCountdown();
       }
 
-      let TOTAL_SECONDS = 10 * 60;
-      let TOTAL_DIST = Math.round(10 * 200 / 30);
+      let TOTAL_SECONDS = 40 * 60;
+      let TOTAL_DIST = Math.round(40 * 200 / 30);
       let remainingSeconds = TOTAL_SECONDS;
 
       const timeDisplay = document.getElementById('time-display');
@@ -343,14 +343,11 @@
           resetToInitial();
         }
         if (event.data.type === 'set-duration') {
-          const mins = event.data.minutes || 30;
+          const mins = event.data.minutes || 40;
           TOTAL_SECONDS = mins * 60;
           TOTAL_DIST = Math.round(mins * 200 / 30);
           remainingSeconds = TOTAL_SECONDS;
           updateCountdown();
-          started = true;
-          paused = false;
-          startCountdown();
         }
         if (event.data.type === 'autostart') {
           handleAutostart();

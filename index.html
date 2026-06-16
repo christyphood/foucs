@@ -392,7 +392,6 @@
           function sendFlightmodeStart() {
             const w = flightmodeFrame.contentWindow;
             if (!w) return;
-            w.postMessage({ type: "set-duration", minutes: storedDurationMinutes }, "*");
             w.postMessage({ type: "autostart" }, "*");
           }
 
@@ -489,7 +488,6 @@
             const el2 = document.getElementById("duration-card");
             if (el1) el1.textContent = label;
             if (el2) el2.textContent = label;
-            flightmodeFrame.contentWindow?.postMessage({ type: "set-duration", minutes: mins }, "*");
           }
         });
 
