@@ -43,7 +43,7 @@
     <div class="relative w-[375px] h-[811.5px]">
       <div class="absolute left-[0px] top-[0px] z-[1] w-[375px] h-[811.5px] flex box-border flex-shrink-0 flex-col justify-between items-center overflow-hidden bg-[rgb(5,5,5)]">
         <div class="relative flex-shrink-0 z-[1] w-[375px] h-[41px] flex box-border flex-shrink-0 flex-row justify-between items-center px-[22.39px]">
-          <div id="status-countdown" class="relative flex-shrink-0 z-[1] text-[13.99px] font-[JOOXSansBrand] font-semibold leading-[16.79px] text-[rgb(255,255,255)] flex items-center justify-start h-[17px] min-w-[29.5px] whitespace-nowrap">30:00</div>
+          <div id="status-countdown" class="relative flex-shrink-0 z-[1] text-[13.99px] font-[JOOXSansBrand] font-semibold leading-[16.79px] text-[rgb(255,255,255)] flex items-center justify-start h-[17px] min-w-[29.5px] whitespace-nowrap">10:00</div>
           <div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[5.6px]">
             <div class="relative flex-shrink-0 z-[1] w-[16.5px] h-[16.5px] overflow-hidden"><img src="./static/Vector_5fe579.svg" class="absolute left-[0px] top-[4.5px] z-[1] w-[12px] h-[10px]" style="object-fit:cover" /></div>
             <div class="relative flex-shrink-0 z-[2] w-[16.5px] h-[16.5px] overflow-hidden"><img src="./static/Vector_4878a4.svg" class="absolute left-[0px] top-[2.5px] z-[1] w-[15.5px] h-[12px]" style="object-fit:cover" /></div>
@@ -55,11 +55,11 @@
         <div class="relative flex-shrink-0 z-[3] w-[375px] h-[90.5px] flex box-border flex-shrink-0 flex-col justify-end items-start">
           <div class="relative flex-shrink-0 z-[1] self-stretch w-[375px] h-[121px] flex box-border flex-shrink-0 flex-row justify-between items-end pt-[30px] pb-[15.38px] px-[23.08px]">
             <div class="relative flex-shrink-0 z-[1] flex box-border flex-shrink-0 flex-col justify-start items-start gap-y-[3.85px]">
-              <div id="time-display" class="relative flex-shrink-0 z-[1] text-[34.62px] font-[JOOXSansBrand] font-bold leading-[41.54px] tracking-[-0.69px] text-[rgb(255,255,255)] flex items-center justify-start h-[42px] w-[105px] whitespace-nowrap">30:00</div>
+              <div id="time-display" class="relative flex-shrink-0 z-[1] text-[34.62px] font-[JOOXSansBrand] font-bold leading-[41.54px] tracking-[-0.69px] text-[rgb(255,255,255)] flex items-center justify-start h-[42px] w-[105px] whitespace-nowrap">10:00</div>
               <div class="relative flex-shrink-0 z-[2] text-[12.5px] font-[JOOXSansBrand] font-medium leading-[15px] tracking-[0.25px] text-[rgb(161,161,161)] flex items-center justify-start h-[15px] w-[87px] whitespace-nowrap">Time to Dest</div>
             </div>
             <div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-col justify-start items-end gap-y-[3.85px]">
-              <div id="dist-display" class="relative flex-shrink-0 z-[1] text-[34.62px] font-[JOOXSansBrand] font-bold leading-[41.54px] tracking-[-0.69px] text-[rgb(255,255,255)] flex items-center justify-end h-[42px] w-[129.5px] whitespace-nowrap">200 km</div>
+              <div id="dist-display" class="relative flex-shrink-0 z-[1] text-[34.62px] font-[JOOXSansBrand] font-bold leading-[41.54px] tracking-[-0.69px] text-[rgb(255,255,255)] flex items-center justify-end h-[42px] w-[129.5px] whitespace-nowrap">67 km</div>
               <div class="relative flex-shrink-0 z-[2] text-[12.5px] font-[JOOXSansBrand] font-medium leading-[15px] tracking-[0.25px] text-[rgb(161,161,161)] flex items-center justify-start h-[15px] w-[85.5px] whitespace-nowrap">Dist to Dest</div>
             </div>
           </div>
@@ -84,9 +84,8 @@
         </div>
         <div class="relative flex-shrink-0 z-[5] w-[375px] h-[110.5px]">
           <div class="absolute left-[0px] top-[0px] z-[1] w-[375px] h-[110.5px] bg-[rgba(11,11,11,0)]"></div>
-          <img id="player-controls-bar" src="./static/Frame_1912055138_faaa1f.svg" class="absolute left-[86.5px] top-[20.5px] z-[2] w-[202px] h-[70px]" style="object-fit:cover" />
-          <img id="play-pause-icon" src="./static/play-icon.png" alt="" class="absolute left-[157px] top-[15px] z-[11] w-[60px] h-[60px] pointer-events-none" style="object-fit:contain" />
-          <button id="play-pause-btn" style="position:absolute;left:157px;top:15px;width:60px;height:60px;z-index:12;cursor:pointer;border-radius:50%;background:transparent;border:none;-webkit-tap-highlight-color:transparent"></button>
+          <img src="./static/Frame_1912055138_faaa1f.svg" class="absolute left-[86.5px] top-[20.5px] z-[2] w-[202px] h-[70px]" style="object-fit:cover" />
+          <button id="play-pause-btn" style="position:absolute;left:157px;top:15px;width:60px;height:60px;z-index:10;cursor:pointer;border-radius:50%;background:transparent;border:none;-webkit-tap-highlight-color:transparent"></button>
           <button id="next-song-btn" style="position:absolute;left:258px;top:35px;width:40px;height:40px;z-index:10;cursor:pointer;border-radius:50%;background:transparent;border:none;-webkit-tap-highlight-color:transparent"></button>
         </div>
         <div class="relative flex-shrink-0 z-[6] self-stretch w-[375px] h-[32.5px] flex box-border flex-shrink-0 flex-row justify-center items-center">
@@ -139,16 +138,13 @@
         audio.play().catch(() => {});
       }
 
-      let TOTAL_SECONDS = 30 * 60;
-      let TOTAL_DIST = 200;
+      let TOTAL_SECONDS = 10 * 60;
+      let TOTAL_DIST = Math.round(10 * 200 / 30);
       let remainingSeconds = TOTAL_SECONDS;
 
       const timeDisplay = document.getElementById('time-display');
       const distDisplay = document.getElementById('dist-display');
       const statusCountdown = document.getElementById('status-countdown');
-      const playPauseIcon = document.getElementById('play-pause-icon');
-      const PLAY_ICON = './static/play-icon.png';
-      const PAUSE_ICON = './static/pause-icon.svg';
 
       function formatTime(s) {
         const m = Math.floor(s / 60);
@@ -156,11 +152,6 @@
         return `${m}:${sec.toString().padStart(2, '0')}`;
       }
 
-      function updatePlayPauseIcon() {
-        if (!playPauseIcon) return;
-        const isPlaying = started && !paused;
-        playPauseIcon.src = isPlaying ? PAUSE_ICON : PLAY_ICON;
-      }
 
       function updateCountdown() {
         const label = formatTime(remainingSeconds);
@@ -171,15 +162,21 @@
       }
 
       let countdownTimer = null;
+      function stopCountdown() {
+        if (countdownTimer) {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+        }
+      }
       function startCountdown() {
-        if (countdownTimer) return;
+        stopCountdown();
+        updateCountdown();
         countdownTimer = setInterval(() => {
           if (remainingSeconds > 0) {
             remainingSeconds--;
             updateCountdown();
           } else {
-            clearInterval(countdownTimer);
-            countdownTimer = null;
+            stopCountdown();
           }
         }, 1000);
       }
@@ -225,7 +222,7 @@
         }
         remainingSeconds = TOTAL_SECONDS;
         updateCountdown();
-        updatePlayPauseIcon();
+
 
         notch.classList.remove('shutter-closed');
         earpiece.classList.remove('shutter-closed');
@@ -243,18 +240,14 @@
       function pauseAll() {
         paused = true;
         audio.pause();
-        if (countdownTimer) {
-          clearInterval(countdownTimer);
-          countdownTimer = null;
-        }
-        updatePlayPauseIcon();
+        stopCountdown();
       }
 
       function resumeAll() {
         paused = false;
         audio.play().catch(() => {});
         startCountdown();
-        updatePlayPauseIcon();
+
       }
 
       function togglePlayPause(e) {
@@ -263,7 +256,7 @@
           started = true;
           playSong();
           if (!countdownTimer) startCountdown();
-          updatePlayPauseIcon();
+  
           return;
         }
         if (paused) {
@@ -293,7 +286,7 @@
 
         setTimeout(() => {
           notchLabel.style.opacity = '1';
-        }, 300);
+        }, 150);
 
         setTimeout(() => {
           catIndex = nextCat;
@@ -303,7 +296,7 @@
           video.load();
           video.play();
           playSong();
-        }, 800);
+        }, 400);
 
         setTimeout(() => {
           notchLabel.style.opacity = '0';
@@ -314,9 +307,9 @@
 
             setTimeout(() => {
               isAnimating = false;
-            }, 460);
-          }, 300);
-        }, 1400);
+            }, 250);
+          }, 150);
+        }, 700);
       });
 
       nextSongBtn.addEventListener('click', () => {
@@ -334,27 +327,35 @@
         }
       });
 
-      updatePlayPauseIcon();
+      function handleAutostart() {
+        if (!started) {
+          started = true;
+          paused = false;
+          playSong();
+        }
+        if (!countdownTimer) startCountdown();
+      }
 
       window.addEventListener('message', (event) => {
         if (!event.data) return;
         if (event.data.type === 'flightmode-reset') {
           resetToInitial();
         }
-        if (event.data.type === 'autostart') {
-          if (!countdownTimer) startCountdown();
-          if (!started) {
-            started = true;
-            playSong();
-            updatePlayPauseIcon();
-          }
-        }
         if (event.data.type === 'set-duration') {
-          const mins = event.data.minutes || 30;
+          const mins = event.data.minutes || 10;
           TOTAL_SECONDS = mins * 60;
           TOTAL_DIST = Math.round(mins * 200 / 30);
           remainingSeconds = TOTAL_SECONDS;
           updateCountdown();
+        }
+        if (event.data.type === 'autostart') {
+          handleAutostart();
+        }
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && !countdownTimer && remainingSeconds > 0) {
+          handleAutostart();
         }
       });
     </script>
