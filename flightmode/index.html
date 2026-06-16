@@ -347,6 +347,9 @@
           TOTAL_DIST = Math.round(mins * 200 / 30);
           remainingSeconds = TOTAL_SECONDS;
           updateCountdown();
+          started = true;
+          paused = false;
+          startCountdown();
         }
         if (event.data.type === 'autostart') {
           handleAutostart();
