@@ -43,7 +43,7 @@
     <div class="relative w-[375px] h-[811.5px]">
       <div class="absolute left-[0px] top-[0px] z-[1] w-[375px] h-[811.5px] flex box-border flex-shrink-0 flex-col justify-between items-center overflow-hidden bg-[rgb(5,5,5)]">
         <div class="relative flex-shrink-0 z-[1] w-[375px] h-[41px] flex box-border flex-shrink-0 flex-row justify-between items-center px-[22.39px]">
-          <div class="relative flex-shrink-0 z-[1] text-[13.99px] font-[JOOXSansBrand] font-semibold leading-[16.79px] text-[rgb(255,255,255)] flex items-center justify-start h-[17px] w-[29.5px] whitespace-nowrap">9:41</div>
+          <div id="status-countdown" class="relative flex-shrink-0 z-[1] text-[13.99px] font-[JOOXSansBrand] font-semibold leading-[16.79px] text-[rgb(255,255,255)] flex items-center justify-start h-[17px] min-w-[29.5px] whitespace-nowrap">30:00</div>
           <div class="relative flex-shrink-0 z-[2] flex box-border flex-shrink-0 flex-row justify-start items-center gap-x-[5.6px]">
             <div class="relative flex-shrink-0 z-[1] w-[16.5px] h-[16.5px] overflow-hidden"><img src="./static/Vector_5fe579.svg" class="absolute left-[0px] top-[4.5px] z-[1] w-[12px] h-[10px]" style="object-fit:cover" /></div>
             <div class="relative flex-shrink-0 z-[2] w-[16.5px] h-[16.5px] overflow-hidden"><img src="./static/Vector_4878a4.svg" class="absolute left-[0px] top-[2.5px] z-[1] w-[15.5px] h-[12px]" style="object-fit:cover" /></div>
@@ -84,8 +84,9 @@
         </div>
         <div class="relative flex-shrink-0 z-[5] w-[375px] h-[110.5px]">
           <div class="absolute left-[0px] top-[0px] z-[1] w-[375px] h-[110.5px] bg-[rgba(11,11,11,0)]"></div>
-          <img src="./static/Frame_1912055138_faaa1f.svg" class="absolute left-[86.5px] top-[20.5px] z-[2] w-[202px] h-[70px]" style="object-fit:cover" />
-          <button id="play-pause-btn" style="position:absolute;left:157px;top:15px;width:60px;height:60px;z-index:10;cursor:pointer;border-radius:50%;background:transparent;border:none;-webkit-tap-highlight-color:transparent"></button>
+          <img id="player-controls-bar" src="./static/Frame_1912055138_faaa1f.svg" class="absolute left-[86.5px] top-[20.5px] z-[2] w-[202px] h-[70px]" style="object-fit:cover" />
+          <img id="play-pause-icon" src="./static/play-icon.png" alt="" class="absolute left-[157px] top-[15px] z-[11] w-[60px] h-[60px] pointer-events-none" style="object-fit:contain" />
+          <button id="play-pause-btn" style="position:absolute;left:157px;top:15px;width:60px;height:60px;z-index:12;cursor:pointer;border-radius:50%;background:transparent;border:none;-webkit-tap-highlight-color:transparent"></button>
           <button id="next-song-btn" style="position:absolute;left:258px;top:35px;width:40px;height:40px;z-index:10;cursor:pointer;border-radius:50%;background:transparent;border:none;-webkit-tap-highlight-color:transparent"></button>
         </div>
         <div class="relative flex-shrink-0 z-[6] self-stretch w-[375px] h-[32.5px] flex box-border flex-shrink-0 flex-row justify-center items-center">
@@ -144,6 +145,10 @@
 
       const timeDisplay = document.getElementById('time-display');
       const distDisplay = document.getElementById('dist-display');
+      const statusCountdown = document.getElementById('status-countdown');
+      const playPauseIcon = document.getElementById('play-pause-icon');
+      const PLAY_ICON = './static/play-icon.png';
+      const PAUSE_ICON = './static/pause-icon.svg';
 
       function formatTime(s) {
         const m = Math.floor(s / 60);
@@ -151,8 +156,16 @@
         return `${m}:${sec.toString().padStart(2, '0')}`;
       }
 
+      function updatePlayPauseIcon() {
+        if (!playPauseIcon) return;
+        const isPlaying = started && !paused;
+        playPauseIcon.src = isPlaying ? PAUSE_ICON : PLAY_ICON;
+      }
+
       function updateCountdown() {
-        timeDisplay.textContent = formatTime(remainingSeconds);
+        const label = formatTime(remainingSeconds);
+        timeDisplay.textContent = label;
+        if (statusCountdown) statusCountdown.textContent = label;
         const dist = Math.round(TOTAL_DIST * (remainingSeconds / TOTAL_SECONDS));
         distDisplay.textContent = `${dist} km`;
       }
@@ -212,6 +225,7 @@
         }
         remainingSeconds = TOTAL_SECONDS;
         updateCountdown();
+        updatePlayPauseIcon();
 
         notch.classList.remove('shutter-closed');
         earpiece.classList.remove('shutter-closed');
@@ -233,12 +247,14 @@
           clearInterval(countdownTimer);
           countdownTimer = null;
         }
+        updatePlayPauseIcon();
       }
 
       function resumeAll() {
         paused = false;
         audio.play().catch(() => {});
         startCountdown();
+        updatePlayPauseIcon();
       }
 
       function togglePlayPause(e) {
@@ -246,7 +262,8 @@
         if (!started) {
           started = true;
           playSong();
-          startCountdown();
+          if (!countdownTimer) startCountdown();
+          updatePlayPauseIcon();
           return;
         }
         if (paused) {
@@ -313,9 +330,11 @@
         e.stopPropagation();
         resetToInitial();
         if (window.parent !== window) {
-          window.parent.postMessage({ type: 'flightmode-exit' }, '*');
+          window.parent.postMessage({ type: 'flightmode-exit-home' }, '*');
         }
       });
+
+      updatePlayPauseIcon();
 
       window.addEventListener('message', (event) => {
         if (!event.data) return;
@@ -323,10 +342,11 @@
           resetToInitial();
         }
         if (event.data.type === 'autostart') {
+          if (!countdownTimer) startCountdown();
           if (!started) {
             started = true;
             playSong();
-            startCountdown();
+            updatePlayPauseIcon();
           }
         }
         if (event.data.type === 'set-duration') {

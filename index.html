@@ -425,12 +425,37 @@
           }, TRANSITION_MS);
         }
 
+        function resetTicketToInitial() {
+          resetFlightmode();
+          flightmodeWrap.classList.add("invisible", "pointer-events-none");
+          flightmodeWrap.classList.remove("show", "exit");
+          flightCardWrap.classList.add("invisible", "pointer-events-none");
+          flightCardWrap.classList.remove("show");
+          flightCard.classList.remove("exit-down", "enter-back");
+          ticketContent.classList.remove("exit-up", "enter-back-down");
+          statusBar.classList.remove("exit-up-nav", "enter-back-nav");
+          topNav.classList.remove("exit-up-nav", "enter-back-nav");
+          transitionedToFlightmode = false;
+          boardingCardVisible = false;
+          isTransitioning = false;
+        }
+
+        function exitToHome() {
+          resetTicketToInitial();
+          if (window.parent !== window) {
+            window.parent.postMessage({ type: "exit-to-home" }, "*");
+          }
+        }
+
         flightCard.addEventListener("click", startFlightmodeTransition);
 
         window.addEventListener("message", (event) => {
           if (!event.data) return;
           if (event.data.type === "flightmode-exit") {
             startBoardingCardTransition();
+          }
+          if (event.data.type === "flightmode-exit-home") {
+            exitToHome();
           }
           if (event.data.type === "set-destination") {
             const code = event.data.code || "";
