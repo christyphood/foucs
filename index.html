@@ -391,6 +391,7 @@
           setTimeout(() => {
             flightCardWrap.classList.add("pointer-events-none");
             isTransitioning = false;
+            flightmodeFrame.contentWindow?.postMessage({ type: "autostart" }, "*");
           }, TRANSITION_MS);
         }
 

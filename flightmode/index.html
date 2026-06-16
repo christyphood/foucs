@@ -322,6 +322,13 @@
         if (event.data.type === 'flightmode-reset') {
           resetToInitial();
         }
+        if (event.data.type === 'autostart') {
+          if (!started) {
+            started = true;
+            playSong();
+            startCountdown();
+          }
+        }
         if (event.data.type === 'set-duration') {
           const mins = event.data.minutes || 30;
           TOTAL_SECONDS = mins * 60;
