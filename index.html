@@ -296,6 +296,8 @@
         let currentSeat = null;
         let audioReady = false;
         let experienceStarted = false;
+        let exitAnimationStarted = false;
+        let checkinSoundPlayed = false;
         let finalSeat = seats[Math.floor(Math.random() * seats.length)];
 
         function unlockAudio() {
@@ -310,16 +312,20 @@
         }
 
         function playCheckinSound() {
-          checkinSound.muted = false;
-          checkinSound.currentTime = 0;
-          const attempt = () => checkinSound.play();
+          if (checkinSoundPlayed) return;
+          checkinSoundPlayed = true;
+
+          const attempt = () => {
+            checkinSound.muted = false;
+            checkinSound.currentTime = 0;
+            return checkinSound.play().catch(() => {});
+          };
+
           if (audioReady) {
-            attempt().catch(() => {});
+            attempt();
             return;
           }
-          unlockAudio()
-            .then(attempt)
-            .catch(() => {});
+          unlockAudio().then(attempt).catch(() => {});
         }
 
         function bindAudioUnlock() {
@@ -338,11 +344,12 @@
         function beginTicketFlow() {
           if (experienceStarted) return;
           experienceStarted = true;
-          unlockAudio().catch(() => {});
           startSelection();
         }
 
         function startExitAnimation() {
+          if (exitAnimationStarted) return;
+          exitAnimationStarted = true;
           cardSeatLabel.textContent = finalSeat.dataset.seat;
           ticketContent.classList.add("exit-up");
           flightCardWrap.classList.remove("invisible", "pointer-events-none");
@@ -488,6 +495,10 @@
           seatLabel.textContent = "";
           finalSeat = seats[Math.floor(Math.random() * seats.length)];
           experienceStarted = false;
+          exitAnimationStarted = false;
+          checkinSoundPlayed = false;
+          checkinSound.pause();
+          checkinSound.currentTime = 0;
           transitionedToFlightmode = false;
           boardingCardVisible = false;
           isTransitioning = false;
