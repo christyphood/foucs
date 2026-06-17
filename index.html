@@ -124,11 +124,11 @@
         cursor: pointer;
       }
       #flight-card-wrap.show #flight-card.exit-down {
-        animation: flight-card-exit-down 1s ease-in forwards;
+        animation: flight-card-exit-down 0.5s ease-in forwards;
         pointer-events: none;
       }
       #flight-card.exit-down {
-        animation: flight-card-exit-down 1s ease-in forwards;
+        animation: flight-card-exit-down 0.5s ease-in forwards;
         pointer-events: none;
       }
       @keyframes flight-card-exit-down {
@@ -263,7 +263,7 @@
         const CARD_ENTER_MS = 1000;
         const CARD_STAY_MS = 1000;
         const BOARDING_CARD_DELAY_MS = CARD_ENTER_MS + CARD_STAY_MS;
-        const CARD_EXIT_MS = 1000;
+        const CARD_EXIT_MS = 500;
         let transitionedToFlightmode = false;
         let isTransitioning = false;
         let boardingCardVisible = false;
