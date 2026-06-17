@@ -107,7 +107,7 @@
         box-shadow: 300px 0 0 rgb(2, 2, 2);
       }
       #flight-card-wrap.show #flight-card {
-        animation: flight-card-enter 1s ease-in forwards;
+        animation: flight-card-enter 2s ease-in forwards;
       }
       @keyframes flight-card-enter {
         from {
@@ -248,6 +248,7 @@
         const flightmodeFrame = document.getElementById("flightmode-frame");
         const checkinSound = document.getElementById("checkin-sound");
         const TRANSITION_MS = 1000;
+        const BOARDING_CARD_DELAY_MS = 2000;
         let transitionedToFlightmode = false;
         let isTransitioning = false;
         let boardingCardVisible = false;
@@ -335,7 +336,7 @@
           boardingCardVisible = true;
           setTimeout(() => {
             startFlightmodeTransition();
-          }, TRANSITION_MS);
+          }, BOARDING_CARD_DELAY_MS);
         }
 
         function startSeatPageTransition() {
