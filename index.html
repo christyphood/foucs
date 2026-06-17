@@ -260,7 +260,9 @@
         const flightmodeFrame = document.getElementById("flightmode-frame");
         const checkinSound = document.getElementById("checkin-sound");
         const TRANSITION_MS = 1000;
-        const BOARDING_CARD_DELAY_MS = 1000;
+        const CARD_ENTER_MS = 1000;
+        const CARD_STAY_MS = 1000;
+        const BOARDING_CARD_DELAY_MS = CARD_ENTER_MS + CARD_STAY_MS;
         const CARD_EXIT_MS = 1000;
         let transitionedToFlightmode = false;
         let isTransitioning = false;
