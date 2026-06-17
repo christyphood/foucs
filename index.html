@@ -280,8 +280,7 @@
         let currentSeat = null;
         let audioReady = false;
         let experienceStarted = false;
-        const finalSeat = seats[Math.floor(Math.random() * seats.length)];
-        const stage = ticketContent.parentElement;
+        let finalSeat = seats[Math.floor(Math.random() * seats.length)];
 
         function unlockAudio() {
           checkinSound.volume = 1;
@@ -318,18 +317,13 @@
 
         function initExperience() {
           bindAudioUnlock();
+        }
 
-          function onStartClick() {
-            if (experienceStarted) return;
-            experienceStarted = true;
-            stage.removeEventListener("click", onStartClick);
-            stage.style.cursor = "";
-            unlockAudio().catch(() => {});
-            startSelection();
-          }
-
-          stage.addEventListener("click", onStartClick);
-          stage.style.cursor = "pointer";
+        function beginTicketFlow() {
+          if (experienceStarted) return;
+          experienceStarted = true;
+          unlockAudio().catch(() => {});
+          startSelection();
         }
 
         function startExitAnimation() {
@@ -339,6 +333,9 @@
           flightCardWrap.classList.add("show");
           playCheckinSound();
           boardingCardVisible = true;
+          setTimeout(() => {
+            startFlightmodeTransition();
+          }, TRANSITION_MS);
         }
 
         function startSeatPageTransition() {
@@ -444,6 +441,13 @@
           ticketContent.classList.remove("exit-up", "enter-back-down");
           statusBar.classList.remove("exit-up-nav", "enter-back-nav");
           topNav.classList.remove("exit-up-nav", "enter-back-nav");
+          if (currentSeat) {
+            currentSeat.classList.remove("selected");
+            currentSeat = null;
+          }
+          seatLabel.textContent = "";
+          finalSeat = seats[Math.floor(Math.random() * seats.length)];
+          experienceStarted = false;
           transitionedToFlightmode = false;
           boardingCardVisible = false;
           isTransitioning = false;
@@ -488,6 +492,12 @@
             const el2 = document.getElementById("duration-card");
             if (el1) el1.textContent = label;
             if (el2) el2.textContent = label;
+          }
+          if (event.data.type === "start-ticket-flow") {
+            beginTicketFlow();
+          }
+          if (event.data.type === "ticket-reset") {
+            resetTicketToInitial();
           }
         });
 
