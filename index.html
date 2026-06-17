@@ -107,7 +107,7 @@
         box-shadow: 300px 0 0 rgb(2, 2, 2);
       }
       #flight-card-wrap.show #flight-card {
-        animation: flight-card-enter 2s ease-in forwards;
+        animation: flight-card-enter 1s ease-in forwards;
       }
       @keyframes flight-card-enter {
         from {
@@ -181,7 +181,6 @@
         visibility: visible;
         pointer-events: auto;
         opacity: 1;
-        animation: flightmode-enter 0.6s ease-out forwards;
       }
       #flightmode-wrap.exit {
         visibility: visible;
@@ -257,7 +256,7 @@
         const flightmodeFrame = document.getElementById("flightmode-frame");
         const checkinSound = document.getElementById("checkin-sound");
         const TRANSITION_MS = 1000;
-        const BOARDING_CARD_DELAY_MS = 2000;
+        const BOARDING_CARD_DELAY_MS = 1000;
         const CARD_EXIT_MS = 1000;
         let transitionedToFlightmode = false;
         let isTransitioning = false;
