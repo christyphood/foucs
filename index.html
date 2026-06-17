@@ -123,6 +123,10 @@
       #flight-card-wrap.show #flight-card {
         cursor: pointer;
       }
+      #flight-card-wrap.show #flight-card.exit-down {
+        animation: flight-card-exit-down 1s ease-in forwards;
+        pointer-events: none;
+      }
       #flight-card.exit-down {
         animation: flight-card-exit-down 1s ease-in forwards;
         pointer-events: none;
@@ -133,7 +137,7 @@
           opacity: 1;
         }
         to {
-          transform: translateY(420px);
+          transform: translateY(480px);
           opacity: 0;
         }
       }
@@ -354,7 +358,7 @@
           }
           isTransitioning = true;
 
-          flightCard.classList.add("exit-down");
+          playCardExitDown();
           ticketContent.classList.remove("exit-up");
           ticketContent.classList.add("enter-back-down");
 
@@ -362,6 +366,9 @@
             flightCardWrap.classList.add("invisible", "pointer-events-none");
             flightCardWrap.classList.remove("show");
             flightCard.classList.remove("exit-down");
+            flightCard.style.animation = "";
+            flightCard.style.transform = "";
+            flightCard.style.opacity = "";
             ticketContent.classList.remove("enter-back-down");
             boardingCardVisible = false;
             isTransitioning = false;
@@ -377,6 +384,15 @@
           flightmodeFrame.contentWindow?.postMessage({ type: "flightmode-reset" }, "*");
         }
 
+        function playCardExitDown() {
+          flightCard.style.animation = "none";
+          flightCard.style.transform = "translateY(0)";
+          flightCard.style.opacity = "1";
+          void flightCard.offsetHeight;
+          flightCard.style.animation = "";
+          flightCard.classList.add("exit-down");
+        }
+
         function startFlightmodeTransition() {
           if (
             isTransitioning ||
@@ -389,7 +405,7 @@
           transitionedToFlightmode = true;
 
           resetFlightmode();
-          flightCard.classList.add("exit-down");
+          playCardExitDown();
 
           function sendFlightmodeStart() {
             const w = flightmodeFrame.contentWindow;
@@ -401,6 +417,9 @@
             flightCardWrap.classList.add("invisible", "pointer-events-none");
             flightCardWrap.classList.remove("show");
             flightCard.classList.remove("exit-down");
+            flightCard.style.animation = "";
+            flightCard.style.transform = "";
+            flightCard.style.opacity = "";
 
             statusBar.classList.add("hidden-for-flightmode");
             topNav.classList.add("hidden-for-flightmode");
@@ -454,6 +473,9 @@
           flightCardWrap.classList.add("invisible", "pointer-events-none");
           flightCardWrap.classList.remove("show");
           flightCard.classList.remove("exit-down", "enter-back");
+          flightCard.style.animation = "";
+          flightCard.style.transform = "";
+          flightCard.style.opacity = "";
           ticketContent.classList.remove("exit-up", "enter-back-down");
           statusBar.classList.remove("exit-up-nav", "enter-back-nav", "hidden-for-flightmode");
           topNav.classList.remove("exit-up-nav", "enter-back-nav", "hidden-for-flightmode");
